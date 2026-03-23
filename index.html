@@ -685,6 +685,21 @@
       </div>
 
       <div class="analysis-block">
+        <div class="block-label">Lyrics Breakdown</div>
+        <div class="block-content" id="lyricsBlock">—</div>
+      </div>
+
+      <div class="analysis-block">
+        <div class="block-label">About the Artist</div>
+        <div class="block-content" id="artistBlock">—</div>
+      </div>
+
+      <div class="analysis-block">
+        <div class="block-label">Historical Context</div>
+        <div class="block-content" id="historyBlock">—</div>
+      </div>
+
+      <div class="analysis-block">
         <div class="block-label">Emotional Landscape</div>
         <div class="mood-meters" id="moodMeters"></div>
       </div>
@@ -692,6 +707,11 @@
       <div class="analysis-block">
         <div class="block-label">Key Lines That Hit Different</div>
         <div class="key-lines" id="keyLines"></div>
+      </div>
+
+      <div class="analysis-block">
+        <div class="block-label">Fun Facts</div>
+        <div class="key-lines" id="funFacts"></div>
       </div>
 
       <div class="analysis-block">
@@ -871,7 +891,20 @@ function renderResult(r) {
   // Text blocks
   document.getElementById('storyBlock').innerHTML = r.story || '—';
   document.getElementById('themesBlock').innerHTML = r.themes || '—';
+  document.getElementById('lyricsBlock').innerHTML = r.lyrics_breakdown || '—';
+  document.getElementById('artistBlock').innerHTML = r.artist_background || '—';
+  document.getElementById('historyBlock').innerHTML = r.historical_context || '—';
   document.getElementById('legacyBlock').innerHTML = r.legacy || '—';
+
+  // Fun facts
+  const factsEl = document.getElementById('funFacts');
+  factsEl.innerHTML = '';
+  (r.funFacts || []).forEach((fact, i) => {
+    const div = document.createElement('div');
+    div.className = 'key-line';
+    div.innerHTML = `<div class="key-line-num">${i + 1}</div><div class="key-line-text" style="font-style:normal">${fact}</div>`;
+    factsEl.appendChild(div);
+  });
 
   // Mood meters
   const moodsEl = document.getElementById('moodMeters');
