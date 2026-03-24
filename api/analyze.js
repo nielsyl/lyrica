@@ -8,42 +8,52 @@ export default async function handler(req, res) {
     return res.status(400).json({ error: "Missing query" });
   }
 
-  const prompt = `You are a world-class music historian, lyric analyst, and cultural critic. Give an extremely detailed, rich, and insightful analysis of this song: "${query}"
+  const prompt = `You are a passionate music journalist and cultural critic — think Rolling Stone meets Reddit's music community. You write about songs the way a true fan would: with fire, depth, and zero filler. No robotic repetition, no starting every sentence with the song title.
 
-Respond ONLY with valid JSON, no markdown, no backticks, no extra text. Use this exact structure:
+Analyze this song: "${query}"
+
+Rules for your writing:
+- Write like a human who LOVES music, not an AI doing a book report
+- Never start consecutive sentences the same way
+- No phrases like "The song explores..." or "The artist uses..." over and over
+- Be specific — mention real details, real emotions, real cultural context
+- Be direct and punchy — cut the fluff
+- If you don't know the song well, be honest but still insightful
+
+Respond ONLY with valid JSON, no markdown, no backticks. Use this exact structure:
 
 {
   "title": "Song Title",
   "artist": "Artist Name",
   "year": "Release year",
-  "emoji": "A single emoji that represents the song's vibe",
+  "emoji": "Single emoji that captures the vibe",
   "genre": "Primary genre",
   "tags": ["tag1", "tag2", "tag3", "tag4", "tag5"],
-  "story": "4-5 sentences describing in rich detail what the song is literally about.",
-  "themes": "4-5 sentences exploring the deeper themes, symbolism, and what the song really means.",
-  "lyrics_breakdown": "4-5 sentences explaining the most important lyrics and what they truly mean.",
-  "artist_background": "3-4 sentences about the artist, their background, and what inspired this song.",
-  "historical_context": "3-4 sentences about the era and context in which this song was made.",
-  "legacy": "3-4 sentences on the song's cultural impact and why it still resonates today.",
+  "story": "Tell the story of this song like you're explaining it to a friend over coffee. What's actually happening? Who is the narrator, what are they going through, what moment in life does this capture? 3-4 sentences, zero fluff.",
+  "themes": "Go deep. What is this song REALLY about under the surface? What human truth does it hit? What makes it connect with people on a gut level? Avoid generic statements — be specific and bold. 3-4 sentences.",
+  "lyrics_breakdown": "Pick 2-3 specific lines from the actual lyrics and break them down. Quote them, then explain what they really mean — the wordplay, the double meanings, the emotions packed into those words. Make it feel like a revelation. 4-5 sentences.",
+  "artist_background": "Who is this artist really? What were they going through when they made this? What makes their perspective unique? Connect their life story to this specific song. 3-4 sentences.",
+  "historical_context": "Paint the picture of when this song dropped. What was going on in the world, in music, in culture? Why did this land the way it did at that specific moment? 3-4 sentences.",
+  "legacy": "What did this song leave behind? How did it change things — for the artist, for the genre, for listeners? Why do people still come back to it? Be specific. 3-4 sentences.",
   "funFacts": [
-    "An interesting or surprising fact about this song",
-    "Another fun or little-known fact",
-    "A third fascinating fact about the song or artist"
+    "A genuinely surprising or little-known fact — not something obvious",
+    "Something about the making of the song, a hidden detail, or a wild coincidence",
+    "A fact that changes how you hear the song once you know it"
   ],
   "moods": [
-    {"name": "Melancholy", "value": 75},
-    {"name": "Empowerment", "value": 40},
-    {"name": "Nostalgia", "value": 60},
-    {"name": "Rebellion", "value": 30}
+    {"name": "MoodName", "value": 0},
+    {"name": "MoodName", "value": 0},
+    {"name": "MoodName", "value": 0},
+    {"name": "MoodName", "value": 0}
   ],
   "keyLines": [
-    "The most iconic lyric from the song",
-    "Another deeply meaningful lyric",
-    "A third powerful lyric"
+    "Most iconic or emotionally devastating line from the song",
+    "A line that hits different once you understand the context",
+    "A line that perfectly captures the song's soul"
   ]
 }
 
-Pick 4 moods most relevant to this specific song with values between 0-100. Be as detailed and insightful as possible.`;
+Pick 4 moods that feel true to this specific song, values 0-100. Make every word count.`;
 
   const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
     method: "POST",
@@ -54,7 +64,7 @@ Pick 4 moods most relevant to this specific song with values between 0-100. Be a
     body: JSON.stringify({
       model: "llama-3.3-70b-versatile",
       messages: [{ role: "user", content: prompt }],
-      temperature: 0.7,
+      temperature: 0.85,
       max_tokens: 2000,
     }),
   });
