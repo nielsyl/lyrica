@@ -6,6 +6,7 @@
 <title>LYRICA — Song Soul Decoder</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
+  /* ── DARK (default) ── */
   :root {
     --bg: #0a0a0f;
     --surface: #111118;
@@ -16,10 +17,10 @@
     --accent3: #7b5cff;
     --text: #f0ede8;
     --muted: #666677;
-    --glow: rgba(200, 255, 0, 0.15);
   }
 
-  [data-theme="light"] {
+  /* ── LIGHT ── */
+  :root[data-theme="light"] {
     --bg: #f5f4ef;
     --surface: #eceae3;
     --card: #ffffff;
@@ -29,11 +30,11 @@
     --accent3: #5a3fcc;
     --text: #1a1a2e;
     --muted: #888899;
-    --glow: rgba(90,138,0,0.1);
   }
 
+  /* ── SYSTEM prefers light ── */
   @media (prefers-color-scheme: light) {
-    :root:not([data-theme="dark"]):not([data-theme="light"]) {
+    :root[data-theme="system"] {
       --bg: #f5f4ef;
       --surface: #eceae3;
       --card: #ffffff;
@@ -43,31 +44,7 @@
       --accent3: #5a3fcc;
       --text: #1a1a2e;
       --muted: #888899;
-      --glow: rgba(90,138,0,0.1);
     }
-  }
-
-  /* Theme toggle button */
-  .theme-toggle {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 20px;
-    padding: 6px 14px;
-    cursor: pointer;
-    transition: all 0.2s;
-  }
-  .theme-toggle:hover { border-color: var(--accent3); }
-  .theme-toggle svg { color: var(--muted); transition: color 0.2s; }
-  .theme-toggle:hover svg { color: var(--text); }
-  .theme-toggle span {
-    font-size: 0.7rem;
-    letter-spacing: 1.5px;
-    text-transform: uppercase;
-    color: var(--muted);
-    font-family: 'DM Sans', sans-serif;
   }
 
   * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -78,16 +55,14 @@
     font-family: 'DM Sans', sans-serif;
     min-height: 100vh;
     overflow-x: hidden;
+    transition: background 0.3s, color 0.3s;
   }
 
-  /* Ambient background */
   body::before {
     content: '';
     position: fixed;
-    top: -50%;
-    left: -50%;
-    width: 200%;
-    height: 200%;
+    top: -50%; left: -50%;
+    width: 200%; height: 200%;
     background: radial-gradient(ellipse at 30% 20%, rgba(123,92,255,0.08) 0%, transparent 50%),
                 radial-gradient(ellipse at 70% 80%, rgba(200,255,0,0.05) 0%, transparent 50%),
                 radial-gradient(ellipse at 50% 50%, rgba(255,107,53,0.04) 0%, transparent 60%);
@@ -95,598 +70,200 @@
     z-index: 0;
   }
 
-  .container {
-    max-width: 860px;
-    margin: 0 auto;
-    padding: 0 24px;
-    position: relative;
-    z-index: 1;
-  }
+  .container { max-width: 860px; margin: 0 auto; padding: 0 24px; position: relative; z-index: 1; }
 
-  /* Header */
-  header {
-    padding: 40px 0 20px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-  }
+  /* ── HEADER ── */
+  header { padding: 40px 0 20px; display: flex; align-items: center; justify-content: space-between; }
 
-  .logo {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 2rem;
-    letter-spacing: 4px;
-    color: var(--accent);
-    text-shadow: 0 0 30px rgba(200,255,0,0.4);
-  }
+  .logo { font-family: 'Bebas Neue', sans-serif; font-size: 2rem; letter-spacing: 4px; color: var(--accent); }
+  .logo span { color: var(--text); opacity: 0.4; }
 
-  .logo span {
-    color: var(--text);
-    opacity: 0.4;
-  }
+  /* ── THEME SWITCHER ── */
+  .theme-switcher { display: flex; gap: 4px; background: var(--surface); border: 1px solid var(--border); border-radius: 24px; padding: 4px; }
 
-  .tagline {
-    font-size: 0.72rem;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    color: var(--muted);
+  .theme-btn {
+    display: flex; align-items: center; gap: 5px;
+    background: transparent; border: none;
+    border-radius: 20px; padding: 5px 12px;
+    cursor: pointer; transition: all 0.2s;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.68rem; letter-spacing: 1px;
+    text-transform: uppercase; color: var(--muted);
   }
+  .theme-btn svg { width: 12px; height: 12px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+  .theme-btn.active { background: var(--card); color: var(--text); box-shadow: 0 1px 4px rgba(0,0,0,0.2); }
+  .theme-btn:hover:not(.active) { color: var(--text); }
 
-  /* Hero */
-  .hero {
-    text-align: center;
-    padding: 60px 0 48px;
-  }
+  /* ── HERO ── */
+  .hero { text-align: center; padding: 60px 0 48px; }
+  .hero-eyebrow { font-size: 0.7rem; letter-spacing: 4px; text-transform: uppercase; color: var(--accent3); margin-bottom: 16px; }
+  .hero h1 { font-family: 'DM Serif Display', serif; font-size: clamp(2.8rem, 6vw, 4.5rem); line-height: 1.05; margin-bottom: 20px; }
+  .hero h1 em { font-style: italic; color: var(--accent); }
+  .hero p { color: var(--muted); font-size: 1rem; font-weight: 300; max-width: 440px; margin: 0 auto 40px; line-height: 1.7; }
 
-  .hero-eyebrow {
-    font-size: 0.7rem;
-    letter-spacing: 4px;
-    text-transform: uppercase;
-    color: var(--accent3);
-    margin-bottom: 16px;
-  }
-
-  .hero h1 {
-    font-family: 'DM Serif Display', serif;
-    font-size: clamp(2.8rem, 6vw, 4.5rem);
-    line-height: 1.05;
-    margin-bottom: 20px;
-  }
-
-  .hero h1 em {
-    font-style: italic;
-    color: var(--accent);
-  }
-
-  .hero p {
-    color: var(--muted);
-    font-size: 1rem;
-    font-weight: 300;
-    max-width: 440px;
-    margin: 0 auto 40px;
-    line-height: 1.7;
-  }
-
-  /* Search area */
-  .search-zone {
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 20px;
-    padding: 32px;
-    margin-bottom: 32px;
-    position: relative;
-    overflow: hidden;
-  }
-
-  .search-zone::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; right: 0;
-    height: 1px;
-    background: linear-gradient(90deg, transparent, var(--accent3), transparent);
-    opacity: 0.5;
-  }
-
-  .search-label {
-    font-size: 0.7rem;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    color: var(--muted);
-    margin-bottom: 12px;
-  }
-
-  .input-row {
-    display: flex;
-    gap: 12px;
-    margin-bottom: 16px;
-  }
+  /* ── SEARCH ── */
+  .search-zone { background: var(--card); border: 1px solid var(--border); border-radius: 20px; padding: 32px; margin-bottom: 32px; position: relative; overflow: hidden; }
+  .search-zone::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px; background: linear-gradient(90deg, transparent, var(--accent3), transparent); opacity: 0.5; }
+  .search-label { font-size: 0.7rem; letter-spacing: 2px; text-transform: uppercase; color: var(--muted); margin-bottom: 12px; }
+  .input-row { display: flex; gap: 12px; margin-bottom: 16px; }
 
   .search-input {
-    flex: 1;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 14px 20px;
-    color: var(--text);
-    font-family: 'DM Sans', sans-serif;
-    font-size: 0.95rem;
-    outline: none;
-    transition: border-color 0.2s, box-shadow 0.2s;
+    flex: 1; background: var(--surface); border: 1px solid var(--border); border-radius: 12px;
+    padding: 14px 20px; color: var(--text); font-family: 'DM Sans', sans-serif;
+    font-size: 0.95rem; outline: none; transition: border-color 0.2s, box-shadow 0.2s;
   }
-
-  .search-input:focus {
-    border-color: var(--accent3);
-    box-shadow: 0 0 0 3px rgba(123,92,255,0.1);
-  }
-
+  .search-input:focus { border-color: var(--accent3); box-shadow: 0 0 0 3px rgba(123,92,255,0.1); }
   .search-input::placeholder { color: var(--muted); }
 
   .btn-primary {
-    background: var(--accent);
-    color: #0a0a0f;
-    border: none;
-    border-radius: 12px;
-    padding: 14px 28px;
-    font-family: 'DM Sans', sans-serif;
-    font-weight: 500;
-    font-size: 0.9rem;
-    letter-spacing: 0.5px;
-    cursor: pointer;
-    transition: transform 0.15s, box-shadow 0.2s, opacity 0.2s;
-    white-space: nowrap;
+    background: var(--accent); color: #0a0a0f; border: none; border-radius: 12px;
+    padding: 14px 28px; font-family: 'DM Sans', sans-serif; font-weight: 500;
+    font-size: 0.9rem; cursor: pointer; transition: transform 0.15s, box-shadow 0.2s; white-space: nowrap;
   }
-
-  .btn-primary:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 8px 24px rgba(200,255,0,0.25);
-  }
-
+  .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 8px 24px rgba(200,255,0,0.25); }
   .btn-primary:active { transform: translateY(0); }
   .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
 
-  .divider-row {
-    display: flex;
-    align-items: center;
-    gap: 16px;
-    margin-bottom: 16px;
-  }
-
+  .divider-row { display: flex; align-items: center; gap: 16px; margin-bottom: 16px; }
   .divider-line { flex: 1; height: 1px; background: var(--border); }
   .divider-text { font-size: 0.72rem; color: var(--muted); letter-spacing: 1px; text-transform: uppercase; }
 
-  /* Mic button */
+  /* ── MIC ── */
   .mic-section { text-align: center; }
-
   .mic-btn {
-    width: 80px;
-    height: 80px;
-    border-radius: 50%;
-    background: var(--surface);
-    border: 2px solid var(--border);
-    color: var(--text);
-    cursor: pointer;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
+    width: 80px; height: 80px; border-radius: 50%; background: var(--surface);
+    border: 2px solid var(--border); color: var(--text); cursor: pointer;
+    display: inline-flex; align-items: center; justify-content: center;
     transition: all 0.2s;
-    position: relative;
-    overflow: visible;
   }
-
-  .mic-btn:hover {
-    border-color: var(--accent3);
-    box-shadow: 0 0 0 8px rgba(123,92,255,0.1);
-  }
-
-  .mic-btn.listening {
-    border-color: var(--accent);
-    box-shadow: 0 0 0 0 rgba(200,255,0,0.4);
-    animation: pulse 1.5s ease infinite;
-    background: rgba(200,255,0,0.08);
-  }
-
-  @keyframes pulse {
-    0% { box-shadow: 0 0 0 0 rgba(200,255,0,0.4); }
-    70% { box-shadow: 0 0 0 20px rgba(200,255,0,0); }
-    100% { box-shadow: 0 0 0 0 rgba(200,255,0,0); }
-  }
-
-  .mic-btn svg { transition: color 0.2s; }
+  .mic-btn:hover { border-color: var(--accent3); box-shadow: 0 0 0 8px rgba(123,92,255,0.1); }
+  .mic-btn.listening { border-color: var(--accent); animation: pulse 1.5s ease infinite; background: rgba(200,255,0,0.08); }
   .mic-btn.listening svg { color: var(--accent); }
+  @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(200,255,0,0.4); } 70% { box-shadow: 0 0 0 20px rgba(200,255,0,0); } 100% { box-shadow: 0 0 0 0 rgba(200,255,0,0); } }
+  .mic-caption { margin-top: 12px; font-size: 0.75rem; color: var(--muted); letter-spacing: 1px; text-transform: uppercase; }
+  .transcript-pill { display: none; background: rgba(200,255,0,0.08); border: 1px solid rgba(200,255,0,0.2); border-radius: 20px; padding: 8px 16px; font-size: 0.78rem; color: var(--accent); text-align: center; margin-top: 12px; }
+  .transcript-pill.visible { display: block; }
 
-  .mic-caption {
-    margin-top: 12px;
-    font-size: 0.75rem;
-    color: var(--muted);
-    letter-spacing: 1px;
-    text-transform: uppercase;
-  }
-
-  /* Loading state */
-  .loading-state {
-    display: none;
-    text-align: center;
-    padding: 60px 0;
-  }
-
+  /* ── LOADING ── */
+  .loading-state { display: none; text-align: center; padding: 60px 0; }
   .loading-state.visible { display: block; }
+  .waveform { display: flex; align-items: center; justify-content: center; gap: 4px; margin-bottom: 24px; }
+  .wave-bar { width: 4px; border-radius: 2px; background: var(--accent); animation: wave 1.2s ease-in-out infinite; }
+  .wave-bar:nth-child(1){height:16px;animation-delay:0s} .wave-bar:nth-child(2){height:32px;animation-delay:.1s} .wave-bar:nth-child(3){height:48px;animation-delay:.2s} .wave-bar:nth-child(4){height:32px;animation-delay:.3s} .wave-bar:nth-child(5){height:56px;animation-delay:.15s} .wave-bar:nth-child(6){height:40px;animation-delay:.25s} .wave-bar:nth-child(7){height:24px;animation-delay:.35s} .wave-bar:nth-child(8){height:48px;animation-delay:.05s} .wave-bar:nth-child(9){height:32px;animation-delay:.2s}
+  @keyframes wave { 0%,100%{transform:scaleY(0.5);opacity:0.4} 50%{transform:scaleY(1);opacity:1} }
+  .loading-text { font-family: 'DM Serif Display', serif; font-size: 1.4rem; margin-bottom: 8px; }
+  .loading-sub { color: var(--muted); font-size: 0.82rem; letter-spacing: 1px; }
 
-  .waveform {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 4px;
-    margin-bottom: 24px;
-  }
-
-  .wave-bar {
-    width: 4px;
-    border-radius: 2px;
-    background: var(--accent);
-    animation: wave 1.2s ease-in-out infinite;
-  }
-
-  .wave-bar:nth-child(1) { height: 16px; animation-delay: 0s; }
-  .wave-bar:nth-child(2) { height: 32px; animation-delay: 0.1s; }
-  .wave-bar:nth-child(3) { height: 48px; animation-delay: 0.2s; }
-  .wave-bar:nth-child(4) { height: 32px; animation-delay: 0.3s; }
-  .wave-bar:nth-child(5) { height: 56px; animation-delay: 0.15s; }
-  .wave-bar:nth-child(6) { height: 40px; animation-delay: 0.25s; }
-  .wave-bar:nth-child(7) { height: 24px; animation-delay: 0.35s; }
-  .wave-bar:nth-child(8) { height: 48px; animation-delay: 0.05s; }
-  .wave-bar:nth-child(9) { height: 32px; animation-delay: 0.2s; }
-
-  @keyframes wave {
-    0%, 100% { transform: scaleY(0.5); opacity: 0.4; }
-    50% { transform: scaleY(1); opacity: 1; }
-  }
-
-  .loading-text {
-    font-family: 'DM Serif Display', serif;
-    font-size: 1.4rem;
-    margin-bottom: 8px;
-  }
-
-  .loading-sub {
-    color: var(--muted);
-    font-size: 0.82rem;
-    letter-spacing: 1px;
-  }
-
-  /* Result card */
-  .result-card {
-    display: none;
-    animation: fadeUp 0.5s ease forwards;
-  }
-
+  /* ── RESULT ── */
+  .result-card { display: none; animation: fadeUp 0.5s ease forwards; }
   .result-card.visible { display: block; }
-
-  @keyframes fadeUp {
-    from { opacity: 0; transform: translateY(20px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
+  @keyframes fadeUp { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
 
   .song-header {
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 20px 20px 0 0;
-    padding: 32px;
-    display: flex;
-    gap: 24px;
-    align-items: flex-start;
-    position: relative;
-    overflow: hidden;
+    background: var(--card); border: 1px solid var(--border); border-radius: 20px 20px 0 0;
+    padding: 32px; display: flex; gap: 24px; align-items: flex-start; position: relative; overflow: hidden;
   }
-
-  .song-header::after {
-    content: '';
-    position: absolute;
-    bottom: 0; left: 0; right: 0;
-    height: 1px;
-    background: linear-gradient(90deg, transparent, var(--border), transparent);
-  }
+  .song-header::after { content:''; position:absolute; bottom:0; left:0; right:0; height:1px; background:linear-gradient(90deg,transparent,var(--border),transparent); }
 
   .album-art {
-    width: 90px;
-    height: 90px;
-    border-radius: 12px;
+    width: 90px; height: 90px; border-radius: 12px;
     background: linear-gradient(135deg, var(--accent3), var(--accent2));
-    flex-shrink: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 2.5rem;
-    position: relative;
-    overflow: hidden;
+    flex-shrink: 0; display: flex; align-items: center; justify-content: center;
+    font-size: 2.5rem; overflow: hidden; position: relative;
   }
-
-  .album-art::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: rgba(0,0,0,0.15);
-  }
+  .album-art img { width: 100%; height: 100%; object-fit: cover; border-radius: 12px; }
+  .album-art .emoji-fallback { font-size: 2.5rem; }
 
   .song-meta { flex: 1; }
+  .song-title { font-family: 'DM Serif Display', serif; font-size: 1.8rem; line-height: 1.1; margin-bottom: 6px; }
+  .song-artist { color: var(--accent); font-size: 0.9rem; font-weight: 500; letter-spacing: 0.5px; margin-bottom: 10px; }
+  .song-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+  .tag { background: var(--surface); border: 1px solid var(--border); border-radius: 20px; padding: 3px 12px; font-size: 0.7rem; letter-spacing: 1px; text-transform: uppercase; color: var(--muted); }
+  .tag.highlight { background: rgba(123,92,255,0.15); border-color: rgba(123,92,255,0.3); color: #a08fff; }
 
-  .song-title {
-    font-family: 'DM Serif Display', serif;
-    font-size: 1.8rem;
-    line-height: 1.1;
-    margin-bottom: 6px;
-  }
+  .analysis-grid { display: grid; gap: 1px; background: var(--border); border: 1px solid var(--border); border-top: none; border-radius: 0 0 20px 20px; overflow: hidden; margin-bottom: 24px; }
+  .analysis-block { background: var(--card); padding: 28px 32px; }
+  .analysis-block:last-child { border-radius: 0 0 20px 20px; }
 
-  .song-artist {
-    color: var(--accent);
-    font-size: 0.9rem;
-    font-weight: 500;
-    letter-spacing: 0.5px;
-    margin-bottom: 10px;
-  }
+  .block-label { font-size: 0.65rem; letter-spacing: 3px; text-transform: uppercase; color: var(--accent3); margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+  .block-label::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+  .block-content { font-size: 0.95rem; line-height: 1.75; color: var(--text); font-weight: 300; opacity: 0.85; }
 
-  .song-tags {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 6px;
-  }
-
-  .tag {
-    background: rgba(255,255,255,0.05);
-    border: 1px solid var(--border);
-    border-radius: 20px;
-    padding: 3px 12px;
-    font-size: 0.7rem;
-    letter-spacing: 1px;
-    text-transform: uppercase;
-    color: var(--muted);
-  }
-
-  .tag.highlight {
-    background: rgba(123,92,255,0.15);
-    border-color: rgba(123,92,255,0.3);
-    color: #a08fff;
-  }
-
-  /* Analysis sections */
-  .analysis-grid {
-    display: grid;
-    gap: 1px;
-    background: var(--border);
-    border: 1px solid var(--border);
-    border-top: none;
-    border-radius: 0 0 20px 20px;
-    overflow: hidden;
-    margin-bottom: 24px;
-  }
-
-  .analysis-block {
-    background: var(--card);
-    padding: 28px 32px;
-    position: relative;
-  }
-
-  .analysis-block:last-child {
-    border-radius: 0 0 20px 20px;
-  }
-
-  .block-label {
-    font-size: 0.65rem;
-    letter-spacing: 3px;
-    text-transform: uppercase;
-    color: var(--accent3);
-    margin-bottom: 12px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-
-  .block-label::after {
-    content: '';
-    flex: 1;
-    height: 1px;
-    background: var(--border);
-  }
-
-  .block-content {
-    font-size: 0.95rem;
-    line-height: 1.75;
-    color: rgba(240,237,232,0.85);
-    font-weight: 300;
-  }
-
-  .block-content strong {
-    color: var(--text);
-    font-weight: 500;
-  }
-
-  /* Mood meter */
-  .mood-meters {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 16px;
-    margin-top: 4px;
-  }
-
-  .mood-item { }
-
-  .mood-name {
-    font-size: 0.75rem;
-    color: var(--muted);
-    margin-bottom: 6px;
-    display: flex;
-    justify-content: space-between;
-  }
-
-  .mood-bar-bg {
-    height: 4px;
-    background: rgba(255,255,255,0.06);
-    border-radius: 2px;
-    overflow: hidden;
-  }
-
-  .mood-bar-fill {
-    height: 100%;
-    border-radius: 2px;
-    transition: width 1.2s cubic-bezier(0.23, 1, 0.32, 1);
-    width: 0;
-  }
+  /* Mood meters */
+  .mood-meters { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 4px; }
+  .mood-name { font-size: 0.75rem; color: var(--muted); margin-bottom: 6px; display: flex; justify-content: space-between; }
+  .mood-bar-bg { height: 4px; background: var(--border); border-radius: 2px; overflow: hidden; }
+  .mood-bar-fill { height: 100%; border-radius: 2px; transition: width 1.2s cubic-bezier(0.23,1,0.32,1); width: 0; }
 
   /* Key lines */
-  .key-lines {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-  }
+  .key-lines { display: flex; flex-direction: column; gap: 12px; }
+  .key-line { display: flex; gap: 14px; align-items: flex-start; }
+  .key-line-num { font-family: 'Bebas Neue', sans-serif; font-size: 1.1rem; color: var(--accent); line-height: 1.5; width: 20px; flex-shrink: 0; }
+  .key-line-text { font-size: 0.9rem; color: var(--text); opacity: 0.75; line-height: 1.6; font-style: italic; font-family: 'DM Serif Display', serif; }
 
-  .key-line {
-    display: flex;
-    gap: 14px;
-    align-items: flex-start;
-  }
+  .btn-secondary { background: transparent; border: 1px solid var(--border); border-radius: 12px; padding: 12px 24px; color: var(--muted); font-family: 'DM Sans', sans-serif; font-size: 0.85rem; cursor: pointer; transition: all 0.2s; display: inline-flex; align-items: center; gap: 8px; }
+  .btn-secondary:hover { border-color: var(--accent3); color: var(--text); }
 
-  .key-line-num {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 1.1rem;
-    color: var(--accent);
-    line-height: 1.5;
-    width: 20px;
-    flex-shrink: 0;
-  }
-
-  .key-line-text {
-    font-size: 0.9rem;
-    color: rgba(240,237,232,0.75);
-    line-height: 1.6;
-    font-style: italic;
-    font-family: 'DM Serif Display', serif;
-  }
-
-  /* Try another */
-  .btn-secondary {
-    background: transparent;
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 12px 24px;
-    color: var(--muted);
-    font-family: 'DM Sans', sans-serif;
-    font-size: 0.85rem;
-    cursor: pointer;
-    transition: all 0.2s;
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-  }
-
-  .btn-secondary:hover {
-    border-color: var(--accent3);
-    color: var(--text);
-  }
-
-  /* Error */
-  .error-state {
-    display: none;
-    background: rgba(255,107,53,0.08);
-    border: 1px solid rgba(255,107,53,0.2);
-    border-radius: 16px;
-    padding: 20px 24px;
-    color: #ff9a70;
-    font-size: 0.9rem;
-    margin-top: 16px;
-    line-height: 1.6;
-  }
-
+  .error-state { display: none; background: rgba(255,107,53,0.08); border: 1px solid rgba(255,107,53,0.2); border-radius: 16px; padding: 20px 24px; color: #ff9a70; font-size: 0.9rem; margin-top: 16px; line-height: 1.6; }
   .error-state.visible { display: block; }
 
-  /* Footer */
-  footer {
-    text-align: center;
-    padding: 40px 0 32px;
-    color: var(--muted);
-    font-size: 0.72rem;
-    letter-spacing: 1px;
-    text-transform: uppercase;
-  }
+  footer { text-align: center; padding: 40px 0 32px; color: var(--muted); font-size: 0.72rem; letter-spacing: 1px; text-transform: uppercase; }
 
-  /* Responsive */
+  .spinner { display: inline-block; width: 14px; height: 14px; border: 2px solid rgba(200,255,0,0.2); border-top-color: var(--accent); border-radius: 50%; animation: spin 0.7s linear infinite; vertical-align: middle; margin-right: 6px; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
   @media (max-width: 600px) {
     .input-row { flex-direction: column; }
     .mood-meters { grid-template-columns: 1fr; }
     .song-header { flex-direction: column; }
     .hero h1 { font-size: 2.4rem; }
-    .analysis-block { padding: 20px 20px; }
-    .song-header { padding: 20px; }
+    .analysis-block { padding: 20px; }
+    .theme-btn span { display: none; }
   }
-
-  /* Listening transcript */
-  .transcript-pill {
-    display: none;
-    background: rgba(200,255,0,0.08);
-    border: 1px solid rgba(200,255,0,0.2);
-    border-radius: 20px;
-    padding: 8px 16px;
-    font-size: 0.78rem;
-    color: var(--accent);
-    text-align: center;
-    margin-top: 12px;
-    letter-spacing: 0.5px;
-  }
-  .transcript-pill.visible { display: block; }
-
-  .spinner {
-    display: inline-block;
-    width: 14px;
-    height: 14px;
-    border: 2px solid rgba(200,255,0,0.2);
-    border-top-color: var(--accent);
-    border-radius: 50%;
-    animation: spin 0.7s linear infinite;
-    vertical-align: middle;
-    margin-right: 6px;
-  }
-
-  @keyframes spin { to { transform: rotate(360deg); } }
 </style>
 </head>
 <body>
-
 <div class="container">
+
   <header>
     <div class="logo">LYRICA<span>.</span></div>
-    <button class="theme-toggle" onclick="cycleTheme()" id="themeBtn" title="Toggle theme">
-      <svg id="themeIcon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
-      </svg>
-      <span id="themeLabel">System</span>
-    </button>
+    <div class="theme-switcher">
+      <button class="theme-btn" id="btn-dark" onclick="setTheme('dark')" title="Dark mode">
+        <svg viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        <span>Dark</span>
+      </button>
+      <button class="theme-btn" id="btn-light" onclick="setTheme('light')" title="Light mode">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+        <span>Light</span>
+      </button>
+      <button class="theme-btn" id="btn-system" onclick="setTheme('system')" title="System default">
+        <svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+        <span>System</span>
+      </button>
+    </div>
   </header>
 
   <section class="hero">
     <p class="hero-eyebrow">Powered by AI Understanding</p>
     <h1>What does this song <em>really</em> mean?</h1>
-    <p>Type a song name, or tap the mic and hum — we'll decode the soul, story, and meaning behind the music.</p>
+    <p>Type a song name, or tap the mic and speak — we'll decode the soul, story, and meaning behind the music.</p>
   </section>
 
-  <!-- Search Zone -->
   <div class="search-zone" id="searchZone">
     <div class="search-label">Search by song or artist</div>
     <div class="input-row">
-      <input
-        type="text"
-        class="search-input"
-        id="songInput"
-        placeholder="e.g. Bohemian Rhapsody – Queen"
-        autocomplete="off"
-      />
+      <input type="text" class="search-input" id="songInput" placeholder="e.g. Bohemian Rhapsody – Queen" autocomplete="off"/>
       <button class="btn-primary" id="analyzeBtn" onclick="analyzeSong()">Decode →</button>
     </div>
 
     <div class="divider-row">
       <div class="divider-line"></div>
-      <div class="divider-text">or listen</div>
+      <div class="divider-text">or speak</div>
       <div class="divider-line"></div>
     </div>
 
     <div class="mic-section">
-      <button class="mic-btn" id="micBtn" onclick="toggleMic()" title="Hold to listen">
+      <button class="mic-btn" id="micBtn" onclick="toggleMic()" title="Tap to speak song name">
         <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
           <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/>
           <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
@@ -694,34 +271,28 @@
           <line x1="8" y1="23" x2="16" y2="23"/>
         </svg>
       </button>
-      <div class="mic-caption" id="micCaption">Tap to identify a song</div>
+      <div class="mic-caption" id="micCaption">Tap to speak song name</div>
       <div class="transcript-pill" id="transcriptPill"></div>
     </div>
 
     <div class="error-state" id="errorState"></div>
   </div>
 
-  <!-- Loading -->
   <div class="loading-state" id="loadingState">
     <div class="waveform">
-      <div class="wave-bar"></div>
-      <div class="wave-bar"></div>
-      <div class="wave-bar"></div>
-      <div class="wave-bar"></div>
-      <div class="wave-bar"></div>
-      <div class="wave-bar"></div>
-      <div class="wave-bar"></div>
-      <div class="wave-bar"></div>
-      <div class="wave-bar"></div>
+      <div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div>
+      <div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div>
+      <div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div>
     </div>
     <div class="loading-text">Reading the soul of the song…</div>
     <div class="loading-sub">Decoding themes, emotions & meaning</div>
   </div>
 
-  <!-- Result -->
   <div class="result-card" id="resultCard">
     <div class="song-header">
-      <div class="album-art" id="albumEmoji">🎵</div>
+      <div class="album-art" id="albumArt">
+        <span class="emoji-fallback" id="albumEmoji">🎵</span>
+      </div>
       <div class="song-meta">
         <div class="song-title" id="resultTitle">—</div>
         <div class="song-artist" id="resultArtist">—</div>
@@ -734,42 +305,34 @@
         <div class="block-label">The Story</div>
         <div class="block-content" id="storyBlock">—</div>
       </div>
-
       <div class="analysis-block">
         <div class="block-label">Themes & Deeper Meaning</div>
         <div class="block-content" id="themesBlock">—</div>
       </div>
-
       <div class="analysis-block">
         <div class="block-label">Lyrics Breakdown</div>
         <div class="block-content" id="lyricsBlock">—</div>
       </div>
-
       <div class="analysis-block">
         <div class="block-label">About the Artist</div>
         <div class="block-content" id="artistBlock">—</div>
       </div>
-
       <div class="analysis-block">
         <div class="block-label">Historical Context</div>
         <div class="block-content" id="historyBlock">—</div>
       </div>
-
       <div class="analysis-block">
         <div class="block-label">Emotional Landscape</div>
         <div class="mood-meters" id="moodMeters"></div>
       </div>
-
       <div class="analysis-block">
         <div class="block-label">Key Lines That Hit Different</div>
         <div class="key-lines" id="keyLines"></div>
       </div>
-
       <div class="analysis-block">
         <div class="block-label">Fun Facts</div>
         <div class="key-lines" id="funFacts"></div>
       </div>
-
       <div class="analysis-block">
         <div class="block-label">Why This Song Endures</div>
         <div class="block-content" id="legacyBlock">—</div>
@@ -782,15 +345,109 @@
     </button>
   </div>
 
-  <footer>Lyrica — AI Song Soul Decoder &nbsp;·&nbsp; Powered by Claude</footer>
+  <footer>Lyrica — AI Song Soul Decoder &nbsp;·&nbsp; Powered by Groq AI</footer>
 </div>
 
 <script>
+// ── THEME ──
+let currentTheme = localStorage.getItem('lyrica-theme') || 'system';
+
+function setTheme(theme) {
+  currentTheme = theme;
+  localStorage.setItem('lyrica-theme', theme);
+  document.documentElement.setAttribute('data-theme', theme);
+  document.querySelectorAll('.theme-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('btn-' + theme).classList.add('active');
+}
+
+// Init theme on load
+setTheme(currentTheme);
+
+// ── MIC ──
 let isListening = false;
 let recognition = null;
 let recognitionTimeout = null;
 
-// Enter key support
+function toggleMic() {
+  isListening ? stopListening() : startListening();
+}
+
+function startListening() {
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SR) {
+    showError("Speech recognition isn't supported in this browser. Try Chrome or Edge.");
+    return;
+  }
+
+  recognition = new SR();
+  recognition.continuous = false;
+  recognition.interimResults = true;
+  recognition.lang = 'en-US';
+
+  isListening = true;
+  document.getElementById('micBtn').classList.add('listening');
+  document.getElementById('micCaption').textContent = 'Listening… say the song name';
+  const pill = document.getElementById('transcriptPill');
+  pill.innerHTML = '<span class="spinner"></span> Listening…';
+  pill.classList.add('visible');
+
+  recognition.onresult = (e) => {
+    let interim = '', final = '';
+    for (let i = e.resultIndex; i < e.results.length; i++) {
+      if (e.results[i].isFinal) final += e.results[i][0].transcript;
+      else interim += e.results[i][0].transcript;
+    }
+    const heard = final || interim;
+    pill.innerHTML = `<span class="spinner"></span> Heard: "${heard}"`;
+    if (final) {
+      document.getElementById('songInput').value = final;
+      stopListening();
+      setTimeout(analyzeSong, 400);
+    }
+  };
+
+  recognition.onerror = (e) => {
+    stopListening();
+    if (e.error === 'not-allowed') showError('Microphone access denied. Please allow mic access and try again.');
+    else if (e.error !== 'aborted') showError(`Mic error: ${e.error}. Try typing instead.`);
+  };
+
+  recognition.onend = () => { if (isListening) stopListening(); };
+  recognition.start();
+
+  recognitionTimeout = setTimeout(() => {
+    if (isListening) {
+      stopListening();
+      const p = document.getElementById('transcriptPill');
+      p.textContent = "Didn't catch that — try typing";
+      setTimeout(() => p.classList.remove('visible'), 3000);
+    }
+  }, 8000);
+}
+
+function stopListening() {
+  isListening = false;
+  if (recognition) { try { recognition.stop(); } catch(e){} }
+  clearTimeout(recognitionTimeout);
+  document.getElementById('micBtn').classList.remove('listening');
+  document.getElementById('micCaption').textContent = 'Tap to speak song name';
+  setTimeout(() => document.getElementById('transcriptPill').classList.remove('visible'), 1500);
+}
+
+// ── ALBUM ART (iTunes API) ──
+async function fetchAlbumArt(title, artist) {
+  try {
+    const q = encodeURIComponent(`${title} ${artist}`);
+    const res = await fetch(`https://itunes.apple.com/search?term=${q}&entity=song&limit=1`);
+    const data = await res.json();
+    if (data.results && data.results.length > 0) {
+      return data.results[0].artworkUrl100.replace('100x100', '300x300');
+    }
+  } catch(e) {}
+  return null;
+}
+
+// ── HELPERS ──
 document.getElementById('songInput').addEventListener('keydown', (e) => {
   if (e.key === 'Enter') analyzeSong();
 });
@@ -811,137 +468,65 @@ function setLoading(on) {
 function resetApp() {
   document.getElementById('resultCard').classList.remove('visible');
   document.getElementById('songInput').value = '';
-  document.getElementById('searchZone').style.display = '';
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
-// --- Mic / Speech Recognition ---
-function toggleMic() {
-  if (isListening) {
-    stopListening();
-  } else {
-    startListening();
-  }
-}
-
-function startListening() {
-  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-  if (!SpeechRecognition) {
-    showError("Speech recognition isn't supported in your browser. Try Chrome or Edge, or type the song name instead.");
-    return;
-  }
-
-  recognition = new SpeechRecognition();
-  recognition.continuous = false;
-  recognition.interimResults = true;
-  recognition.lang = 'en-US';
-
-  const micBtn = document.getElementById('micBtn');
-  const micCaption = document.getElementById('micCaption');
-  const pill = document.getElementById('transcriptPill');
-
-  isListening = true;
-  micBtn.classList.add('listening');
-  micCaption.textContent = 'Listening… say the song name';
-  pill.innerHTML = '<span class="spinner"></span> Say the song title or artist name…';
-  pill.classList.add('visible');
-
-  recognition.onresult = (e) => {
-    let interim = '';
-    let final = '';
-    for (let i = e.resultIndex; i < e.results.length; i++) {
-      if (e.results[i].isFinal) final += e.results[i][0].transcript;
-      else interim += e.results[i][0].transcript;
-    }
-    const display = final || interim;
-    pill.innerHTML = `<span class="spinner"></span> Heard: "${display}"`;
-    if (final) {
-      document.getElementById('songInput').value = final;
-      stopListening();
-      setTimeout(() => analyzeSong(), 400);
-    }
-  };
-
-  recognition.onerror = (e) => {
-    stopListening();
-    if (e.error !== 'aborted') {
-      showError(`Mic error: ${e.error}. You can type the song name instead.`);
-    }
-  };
-
-  recognition.onend = () => { if (isListening) stopListening(); };
-
-  recognition.start();
-
-  // Auto-stop after 8s
-  recognitionTimeout = setTimeout(() => {
-    if (isListening) {
-      stopListening();
-      pill.textContent = 'Didn\'t catch that — try typing instead';
-      setTimeout(() => pill.classList.remove('visible'), 3000);
-    }
-  }, 8000);
-}
-
-function stopListening() {
-  isListening = false;
-  if (recognition) { try { recognition.stop(); } catch(e){} }
-  clearTimeout(recognitionTimeout);
-  document.getElementById('micBtn').classList.remove('listening');
-  document.getElementById('micCaption').textContent = 'Tap to identify a song';
-  setTimeout(() => document.getElementById('transcriptPill').classList.remove('visible'), 1500);
-}
-
-// --- Analyze ---
+// ── ANALYZE ──
 async function analyzeSong() {
   const query = document.getElementById('songInput').value.trim();
-  if (!query) {
-    showError('Please enter a song title or artist name.');
-    return;
-  }
+  if (!query) { showError('Please enter a song title or artist name.'); return; }
 
   document.getElementById('resultCard').classList.remove('visible');
   document.getElementById('errorState').classList.remove('visible');
   setLoading(true);
 
   try {
-    const response = await fetch("/api/analyze", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
+    const response = await fetch('/api/analyze', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ query }),
     });
 
     const data = await response.json();
-
-    if (data.error) throw new Error(data.error || 'API error');
-
-    const result = data;
-    renderResult(result);
+    if (data.error) throw new Error(data.error);
+    renderResult(data);
 
   } catch (err) {
     setLoading(false);
-    showError(`Couldn't decode this song: ${err.message}. Check your connection or try a different search.`);
-    console.error(err);
+    showError(`Couldn't decode this song: ${err.message}`);
   }
 }
 
-function renderResult(r) {
+// ── RENDER ──
+async function renderResult(r) {
   setLoading(false);
 
-  // Song header
-  document.getElementById('albumEmoji').textContent = r.emoji || '🎵';
+  // Album art — try iTunes first, fallback to emoji
+  const artEl = document.getElementById('albumArt');
+  const emojiEl = document.getElementById('albumEmoji');
+  emojiEl.textContent = r.emoji || '🎵';
+  artEl.innerHTML = `<span class="emoji-fallback">${r.emoji || '🎵'}</span>`;
+
+  const artUrl = await fetchAlbumArt(r.title, r.artist);
+  if (artUrl) {
+    const img = document.createElement('img');
+    img.src = artUrl;
+    img.alt = `${r.title} cover`;
+    img.onload = () => { artEl.innerHTML = ''; artEl.appendChild(img); };
+  }
+
+  // Meta
   document.getElementById('resultTitle').textContent = r.title || 'Unknown';
   document.getElementById('resultArtist').textContent = [r.artist, r.year].filter(Boolean).join(' · ');
 
   // Tags
   const tagsEl = document.getElementById('resultTags');
   tagsEl.innerHTML = '';
-  const allTags = [r.genre, ...(r.tags || [])].filter(Boolean);
-  allTags.forEach((t, i) => {
-    const span = document.createElement('span');
-    span.className = 'tag' + (i === 0 ? ' highlight' : '');
-    span.textContent = t;
-    tagsEl.appendChild(span);
+  [r.genre, ...(r.tags || [])].filter(Boolean).forEach((t, i) => {
+    const s = document.createElement('span');
+    s.className = 'tag' + (i === 0 ? ' highlight' : '');
+    s.textContent = t;
+    tagsEl.appendChild(s);
   });
 
   // Text blocks
@@ -956,46 +541,39 @@ function renderResult(r) {
   const factsEl = document.getElementById('funFacts');
   factsEl.innerHTML = '';
   (r.funFacts || []).forEach((fact, i) => {
-    const div = document.createElement('div');
-    div.className = 'key-line';
-    div.innerHTML = `<div class="key-line-num">${i + 1}</div><div class="key-line-text" style="font-style:normal">${fact}</div>`;
-    factsEl.appendChild(div);
+    const d = document.createElement('div');
+    d.className = 'key-line';
+    d.innerHTML = `<div class="key-line-num">${i+1}</div><div class="key-line-text" style="font-style:normal">${fact}</div>`;
+    factsEl.appendChild(d);
   });
 
-  // Mood meters
+  // Moods
   const moodsEl = document.getElementById('moodMeters');
   moodsEl.innerHTML = '';
   const colors = ['#c8ff00','#7b5cff','#ff6b35','#00d4ff'];
   (r.moods || []).forEach((m, i) => {
-    const div = document.createElement('div');
-    div.className = 'mood-item';
-    div.innerHTML = `
-      <div class="mood-name"><span>${m.name}</span><span>${m.value}%</span></div>
-      <div class="mood-bar-bg"><div class="mood-bar-fill" style="background:${colors[i%colors.length]}" data-val="${m.value}"></div></div>
-    `;
-    moodsEl.appendChild(div);
+    const d = document.createElement('div');
+    d.className = 'mood-item';
+    d.innerHTML = `<div class="mood-name"><span>${m.name}</span><span>${m.value}%</span></div><div class="mood-bar-bg"><div class="mood-bar-fill" style="background:${colors[i%colors.length]}" data-val="${m.value}"></div></div>`;
+    moodsEl.appendChild(d);
   });
 
   // Key lines
   const linesEl = document.getElementById('keyLines');
   linesEl.innerHTML = '';
   (r.keyLines || []).forEach((line, i) => {
-    const div = document.createElement('div');
-    div.className = 'key-line';
-    div.innerHTML = `<div class="key-line-num">${i + 1}</div><div class="key-line-text">${line}</div>`;
-    linesEl.appendChild(div);
+    const d = document.createElement('div');
+    d.className = 'key-line';
+    d.innerHTML = `<div class="key-line-num">${i+1}</div><div class="key-line-text">${line}</div>`;
+    linesEl.appendChild(d);
   });
 
-  // Show result
   document.getElementById('resultCard').classList.add('visible');
   window.scrollTo({ top: document.getElementById('resultCard').offsetTop - 20, behavior: 'smooth' });
 
-  // Animate mood bars after DOM paint
   requestAnimationFrame(() => {
     setTimeout(() => {
-      document.querySelectorAll('.mood-bar-fill').forEach(bar => {
-        bar.style.width = bar.dataset.val + '%';
-      });
+      document.querySelectorAll('.mood-bar-fill').forEach(b => { b.style.width = b.dataset.val + '%'; });
     }, 200);
   });
 }
