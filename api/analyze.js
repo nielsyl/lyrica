@@ -55,32 +55,75 @@ Respond ONLY with valid JSON, no markdown, no backticks. Use this exact structur
 
 Pick 4 moods that feel true to this specific song, values 0-100. Make every word count.`;
 
-  const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "Authorization": `Bearer ${process.env.GROQ_API_KEY}`,
-    },
-    body: JSON.stringify({
-      model: "llama-3.3-70b-versatile",
-      messages: [{ role: "user", content: prompt }],
-      temperature: 0.85,
-      max_tokens: 2000,
-    }),
-  });
+  const makeRequest = async () => {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 20000); // 20s timeout
 
-  const data = await response.json();
+    try {
+      const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${process.env.GROQ_API_KEY}`,
+        },
+        body: JSON.stringify({
+          model: "llama-3.3-70b-versatile",
+          messages: [{ role: "user", content: prompt }],
+          temperature: 0.85,
+          max_tokens: 2000,
+        }),
+        signal: controller.signal,
+      });
 
-  if (data.error) {
-    return res.status(500).json({ error: data.error.message });
+      clearTimeout(timeout);
+      return response;
+    } catch (err) {
+      clearTimeout(timeout);
+      throw err;
+    }
+  };
+
+  // Retry up to 3 times with delay between attempts
+  let lastError;
+  for (let attempt = 1; attempt <= 3; attempt++) {
+    try {
+      const response = await makeRequest();
+      const data = await response.json();
+
+      if (data.error) {
+        // Rate limit — wait and retry
+        if (data.error.code === 'rate_limit_exceeded' && attempt < 3) {
+          await new Promise(r => setTimeout(r, attempt * 2000));
+          continue;
+        }
+        return res.status(500).json({ error: data.error.message });
+      }
+
+      const text = data.choices?.[0]?.message?.content || "";
+      const jsonMatch = text.match(/\{[\s\S]*\}/);
+
+      if (!jsonMatch) {
+        if (attempt < 3) continue; // retry on bad parse
+        return res.status(500).json({ error: "Could not parse response" });
+      }
+
+      return res.status(200).json(JSON.parse(jsonMatch[0]));
+
+    } catch (err) {
+      lastError = err;
+      if (err.name === 'AbortError') {
+        if (attempt < 3) {
+          await new Promise(r => setTimeout(r, attempt * 1000));
+          continue;
+        }
+        return res.status(504).json({ error: "Request timed out. Please try again." });
+      }
+      if (attempt < 3) {
+        await new Promise(r => setTimeout(r, attempt * 1000));
+        continue;
+      }
+    }
   }
 
-  const text = data.choices?.[0]?.message?.content || "";
-  const jsonMatch = text.match(/\{[\s\S]*\}/);
-
-  if (!jsonMatch) {
-    return res.status(500).json({ error: "Could not parse response" });
-  }
-
-  return res.status(200).json(JSON.parse(jsonMatch[0]));
+  return res.status(500).json({ error: "Something went wrong after 3 attempts. Please try again in a moment." });
 }

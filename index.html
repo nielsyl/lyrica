@@ -3,7 +3,6 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="google-site-verification" content="QNspTw9qlKQ29xxxuWfkHxzatPLzu07Shl3Vpyw4nfw" />
 <title>LYRICA — Song Soul Decoder</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
@@ -285,8 +284,8 @@
       <div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div>
       <div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div>
     </div>
-    <div class="loading-text">Reading the soul of the song…</div>
-    <div class="loading-sub">Decoding themes, emotions & meaning</div>
+    <div class="loading-text" id="loadingText">Reading the soul of the song…</div>
+    <div class="loading-sub" id="loadingSub">Decoding themes, emotions & meaning</div>
   </div>
 
   <div class="result-card" id="resultCard">
@@ -460,10 +459,29 @@ function showError(msg) {
   setTimeout(() => el.classList.remove('visible'), 6000);
 }
 
+let loadingTimer = null;
 function setLoading(on) {
   document.getElementById('loadingState').classList.toggle('visible', on);
   document.getElementById('searchZone').style.opacity = on ? '0.4' : '1';
   document.getElementById('searchZone').style.pointerEvents = on ? 'none' : 'all';
+
+  if (on) {
+    const messages = [
+      ['Reading the soul of the song…', 'Decoding themes, emotions & meaning'],
+      ['Digging into the lyrics…', 'Finding the story beneath the words'],
+      ['Almost there…', 'Putting the full picture together'],
+    ];
+    let i = 0;
+    document.getElementById('loadingText').textContent = messages[0][0];
+    document.getElementById('loadingSub').textContent = messages[0][1];
+    loadingTimer = setInterval(() => {
+      i = (i + 1) % messages.length;
+      document.getElementById('loadingText').textContent = messages[i][0];
+      document.getElementById('loadingSub').textContent = messages[i][1];
+    }, 3000);
+  } else {
+    clearInterval(loadingTimer);
+  }
 }
 
 function resetApp() {
